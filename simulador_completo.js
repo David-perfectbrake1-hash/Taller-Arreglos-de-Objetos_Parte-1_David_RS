@@ -138,17 +138,17 @@ function buscarCliente(cedula) {
 
 function seleccionarCliente(cedula) {
   // 1. Buscar el cliente
-  let clienteEncontrado = buscarCliente(cedula);
+  let clienteEncontrado = buscarCliente(cedula)
   
   // 2. Guardarlo en clienteSeleccionado (variable global)
-  clienteSeleccionado = clienteEncontrado;
+  clienteSeleccionado = clienteEncontrado
   
   // 3. Mostrar datos en los inputs (solo si se encontró)
   if (clienteEncontrado !== null) {
-    document.getElementById("cedula").value = clienteEncontrado.cedula
-    document.getElementById("nombre").value = clienteEncontrado.nombre
-    document.getElementById("apellido").value = clienteEncontrado.apellido
-    document.getElementById("ingresos").value = clienteEncontrado.ingresos
-    document.getElementById("egresos").value = clienteEncontrado.egresos
+    mostrarTextoEnCaja("cedula", clienteEncontrado.cedula)
+    mostrarTextoEnCaja("nombre", clienteEncontrado.nombre)
+    mostrarTextoEnCaja("apellido", clienteEncontrado.apellido)
+    mostrarTextoEnCaja("ingresos", clienteEncontrado.ingresos)
+    mostrarTextoEnCaja("egresos", clienteEncontrado.egresos)
   }
 }
