@@ -120,11 +120,11 @@ function pintarClientes() {
 }
 
 function limpiar() {
-  document.getElementById("cedula").value = ""
-  document.getElementById("nombre").value = ""
-  document.getElementById("apellido").value = ""
-  document.getElementById("ingresos").value = ""
-  document.getElementById("egresos").value = ""
+  mostrarTextoEnCaja("cedula", "")
+  mostrarTextoEnCaja("nombre", "")
+  mostrarTextoEnCaja("apellido", "")
+  mostrarTextoEnCaja("ingresos", "")
+  mostrarTextoEnCaja("egresos", "")
 }
 
 function buscarCliente(cedula) {
