@@ -12,7 +12,7 @@ function recuperarTexto(idComponente){
         return valorEntero;
     }
     function recuperarFloat(idComponente){
-        let valorCaja=recuperaraTexto(idComponente);
+        let valorCaja=recuperarTexto(idComponente);
         let valorFlotante=parseFloat(valorCaja);
         return valorFlotante;
     }

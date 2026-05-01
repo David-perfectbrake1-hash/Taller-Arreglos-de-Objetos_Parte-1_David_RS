@@ -48,10 +48,10 @@ function guardarTasa() {
     // Actualiza la variable global
     tasaInteres = valor
     // Si es válido, mostramos mensaje de éxito
-    mostrarTexto("Tasa configurada correctamente: " + valor + "%")
+    mostrarTexto("mensajeTasa","Tasa configurada correctamente: " + valor + "%")
   } else {
     // Si no, mostramos el error
-    mostrarTexto("La tasa debe estar entre 10% y 20%")
+    mostrarTexto("mensajeTasa","La tasa debe estar entre 10% y 20%")
   }
 }
 
