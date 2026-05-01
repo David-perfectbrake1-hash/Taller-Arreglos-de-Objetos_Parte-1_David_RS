@@ -42,22 +42,16 @@ function mostrarSeccion(id){
 }
 
 function guardarTasa() {
-  // 1. Obtener el valor del input (es un string)
-  let input = document.getElementById("tasaInteres")
-  // 2. Convertir a número
-  let valor = Number(input.value);
+  let valor = recuperarInt("tasaInteres")
 
-  // 2. Validar el rango (entre 10 y 20)
   if (valor >= 10 && valor <= 20) {
     // Actualiza la variable global
     tasaInteres = valor
     // Si es válido, mostramos mensaje de éxito
-    document.getElementById("mensajeTasa").innerText = 
-    "Tasa configurada correctamente: " + valor + "%"
+    mostrarTexto("Tasa configurada correctamente: " + valor + "%")
   } else {
     // Si no, mostramos el error
-    document.getElementById("mensajeTasa").innerText = 
-    "La tasa debe estar entre 10% y 20%"
+    mostrarTexto("La tasa debe estar entre 10% y 20%")
   }
 }
 
