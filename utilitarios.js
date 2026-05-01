@@ -1,4 +1,4 @@
-function recuperaraTexto(idComponente){
+function recuperarTexto(idComponente){
     let componente;
     let valorIngresado;
     componente=document.getElementById(idComponente);

@@ -57,16 +57,12 @@ function guardarTasa() {
 
 function guardarCliente() {
   // Obtener datos del formulario
-  let cedula = document.getElementById("cedula").value
-  let nombre = document.getElementById("nombre").value
-  let apellido = document.getElementById("apellido").value
-  let ingresosStr = document.getElementById("ingresos").value
-  let egresosStr = document.getElementById("egresos").value
+  let cedula = recuperarTexto("cedula")
+  let nombre = recuperarTexto("nombre")
+  let apellido = recuperarTexto("apellido")
+  let ingresos = recuperarFloat("ingresos")
+  let egresos = recuperarFloat("egresos")
   
-  // Convertir valores numéricos
-  let ingresos = Number(ingresosStr)
-  let egresos = Number(egresosStr)
-
   // Verificar si ya existe un cliente con esa cédula
   let clienteExistente = buscarCliente(cedula)
 
@@ -88,12 +84,12 @@ function guardarCliente() {
         ingresos: ingresos,
         egresos: egresos
       };
-      clientes.push(nuevoCliente);
+      clientes.push(nuevoCliente)
     }
 
     // Actualizar la tabla y limpiar el formulario
-    pintarClientes();
-    limpiar();
+    pintarClientes()
+    limpiar()
 }
 
 function pintarClientes() {
