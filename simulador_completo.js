@@ -1,154 +1,315 @@
+// === ESTADO DE LA APLICACIÓN ===
+let clientes = [
+  {cedula: "123", nombre: "Mario", apellido: "Rojas", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
+  {cedula: "456", nombre: "Xavier", apellido: "Rojas", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
+  {cedula: "789", nombre: "Dario", apellido: "Rojas", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500}
+];
+let creditos = [];
 
-  let clientes = [];
-  let creditos = [];
+let tasaInteres = 15;
+let clienteSeleccionado = null;
+let cuotaCalculada = 0;
+let montoCalculado = 0;
+let plazoCalculado = 0;
+let creditoAprobado = false;
 
-  let tasaInteres = 15;
-  let clienteSeleccionado = null;
-  let cuotaCalculada = 0;
-  let montoCalculado = 0;
-  let plazoCalculado = 0;
-  let creditoAprobado = false;
-
-  
-//Para recuperar o mostrar información 
-// usar los métodos de la clase utilitarios, 
-// puede agregar métodos adicionales en utilitarios
-
-/**
- * Función para ocultar todas las secciones del simulador.
- * Se usa antes de mostrar una sección específica para evitar 
- * que se vean varias al mismo tiempo.
- */
+// === NAVEGACIÓN Y UI ===
 function ocultarSecciones() {
-  // 1. Buscamos en el HTML todos los elementos que sean etiquetas <section>
-  //    y los guardamos en una lista llamada 'secciones'.
-  const SECCIONES = document.querySelectorAll("section")
-
-  // 2. Iniciamos un bucle para revisar la lista 'SECCIONES' de una en una.
-  //    En cada vuelta, la sección actual se llamará 'seccion'.
+  const SECCIONES = document.querySelectorAll("section");
   for (let seccion of SECCIONES) {
-    
-    // 3. De la sección que tenemos en la mano en esta vuelta, 
-    //    entramos a su lista de clases y eliminamos "activa".
-    //    Si no la tiene, no pasa nada; si la tiene, se borra.
-    seccion.classList.remove("activa")
-    
-  } // 4. El bucle se repite hasta que ya no queden más secciones en la lista.
-}
-
-function mostrarSeccion(id){
-  ocultarSecciones()
-  document.getElementById(id).classList.add("activa")
-}
-
-function guardarTasa() {
-  let valor = recuperarInt("tasaInteres")
-
-  if (valor >= 10 && valor <= 20) {
-    // Actualiza la variable global
-    tasaInteres = valor
-    // Si es válido, mostramos mensaje de éxito
-    mostrarTexto("mensajeTasa","Tasa configurada correctamente: " + valor + "%")
-  } else {
-    // Si no, mostramos el error
-    mostrarTexto("mensajeTasa","La tasa debe estar entre 10% y 20%")
+    seccion.classList.remove("activa");
   }
 }
 
+function mostrarSeccion(id) {
+  ocultarSecciones();
+  document.getElementById(id).classList.add("activa");
+}
+
+function limpiar() {
+  mostrarTextoEnCaja("cedula", "");
+  mostrarTextoEnCaja("nombre", "");
+  mostrarTextoEnCaja("apellido", "");
+  mostrarTextoEnCaja("email", "")
+  mostrarTextoEnCaja("contacto", "")
+  mostrarTextoEnCaja("ingresos", "");
+  mostrarTextoEnCaja("egresos", "");
+  mostrarTextoEnCaja("montoCredito", "");
+  mostrarTextoEnCaja("plazoCredito", "");
+}
+
+// === GESTIÓN DE CLIENTES ===
+function buscarCliente(cedula) {
+  for (let cliente of clientes) {
+    if (cliente.cedula === cedula) return cliente;
+  }
+  return null;
+}
+
 function guardarCliente() {
-  // Obtener datos del formulario
-  let cedula = recuperarTexto("cedula")
-  let nombre = recuperarTexto("nombre")
-  let apellido = recuperarTexto("apellido")
-  let ingresos = recuperarFloat("ingresos")
-  let egresos = recuperarFloat("egresos")
-  
-  // Verificar si ya existe un cliente con esa cédula
-  let clienteExistente = buscarCliente(cedula)
+  let cedula = recuperarTexto("cedula");
+  let nombre = recuperarTexto("nombre");
+  let apellido = recuperarTexto("apellido");
+  let email = recuperarTexto("email")
+  let contacto = recuperarTexto("contacto")
+  let ingresos = recuperarFloat("ingresos");
+  let egresos = recuperarFloat("egresos");
 
+  if (!cedula || !nombre || !apellido || !email || !contacto || isNaN(ingresos) || isNaN(egresos)) {
+    alert("Por favor, completa todos los campos con datos válidos.");
+    return;
+  }
+
+  let clienteExistente = buscarCliente(cedula);
   if (clienteExistente !== null) {
-      // Si Existe ACTUALIZAR (sin cambiar la cédula)
-      clienteExistente.nombre = nombre
-      clienteExistente.apellido = apellido
-      clienteExistente.ingresos = ingresos
-      clienteExistente.egresos = egresos
-      
-      // Limpiar la selección después de actualizar
-      clienteSeleccionado = null
-    } else {
-      // Si No existe CREAR nuevo cliente
-      let nuevoCliente = {
-        cedula: cedula,
-        nombre: nombre,
-        apellido: apellido,
-        ingresos: ingresos,
-        egresos: egresos
-      };
-      clientes.push(nuevoCliente)
-    }
-
-    // Actualizar la tabla y limpiar el formulario
-    pintarClientes()
-    limpiar()
+    clienteExistente.nombre = nombre;
+    clienteExistente.apellido = apellido;
+    clienteExistente.email = email
+    clienteExistente.contacto = contacto
+    clienteExistente.ingresos = ingresos;
+    clienteExistente.egresos = egresos;
+  } else {
+    clientes.push({cedula, nombre, apellido, email, contacto, ingresos, egresos});
+  }
+  pintarClientes();
+  limpiar();
 }
 
 function pintarClientes() {
-  // 1. Obtener el cuerpo de la tabla
-  let tbody = document.getElementById("tablaClientes")
-  
-  // 2. Limpiar contenido anterior
-  tbody.innerHTML = ""
-
-  // 3. Recorrer el arreglo de clientes
+  let tbody = document.getElementById("tablaClientes");
+  tbody.innerHTML = "";
   for (let cliente of clientes) {
-    let fila = `
+    tbody.innerHTML += `
       <tr>
         <td>${cliente.cedula}</td>
         <td>${cliente.nombre}</td>
         <td>${cliente.apellido}</td>
+        <td>${cliente.email}</td>
+        <td>${cliente.contacto}</td>
         <td>${cliente.ingresos}</td>
         <td>${cliente.egresos}</td>
-        <td>
-            <button onclick="seleccionarCliente('${cliente.cedula}')">Actualizar</button>
-        </td>
-      </tr>
-    `
-
-    // 4. Insertamos la fila en el HTML
-    tbody.innerHTML += fila
+        <td><button onclick="seleccionarCliente('${cliente.cedula}')">Actualizar</button></td>
+        <td><button onclick="eliminarCliente('${cliente.cedula}')">Eliminar</button></td>
+      </tr>`;
   }
-}
-
-function limpiar() {
-  mostrarTextoEnCaja("cedula", "")
-  mostrarTextoEnCaja("nombre", "")
-  mostrarTextoEnCaja("apellido", "")
-  mostrarTextoEnCaja("ingresos", "")
-  mostrarTextoEnCaja("egresos", "")
-}
-
-function buscarCliente(cedula) {
-  for (let cliente of clientes) {
-    if (cliente.cedula === cedula) {
-      return cliente // retorna el objeto cliente si lo encuentra
-    }
-  }
-  return null // retorna null si NO lo encuentra
 }
 
 function seleccionarCliente(cedula) {
-  // 1. Buscar el cliente
-  let clienteEncontrado = buscarCliente(cedula)
-  
-  // 2. Guardarlo en clienteSeleccionado (variable global)
-  clienteSeleccionado = clienteEncontrado
-  
-  // 3. Mostrar datos en los inputs (solo si se encontró)
-  if (clienteEncontrado !== null) {
-    mostrarTextoEnCaja("cedula", clienteEncontrado.cedula)
-    mostrarTextoEnCaja("nombre", clienteEncontrado.nombre)
-    mostrarTextoEnCaja("apellido", clienteEncontrado.apellido)
-    mostrarTextoEnCaja("ingresos", clienteEncontrado.ingresos)
-    mostrarTextoEnCaja("egresos", clienteEncontrado.egresos)
+  let encontrado = buscarCliente(cedula);
+  clienteSeleccionado = encontrado;
+  if (encontrado) {
+    mostrarTextoEnCaja("cedula", encontrado.cedula);
+    mostrarTextoEnCaja("nombre", encontrado.nombre);
+    mostrarTextoEnCaja("apellido", encontrado.apellido);
+    mostrarTextoEnCaja("email", encontrado.email);
+    mostrarTextoEnCaja("contacto", encontrado.contacto);
+    mostrarTextoEnCaja("ingresos", encontrado.ingresos);
+    mostrarTextoEnCaja("egresos", encontrado.egresos);
   }
+}
+
+function eliminarCliente(cedula) {
+    if (confirm(`¿Estás seguro de eliminar al cliente con cédula: ${cedula} ?`)) {
+        for (let cliente of clientes) {
+            if (cliente.cedula === cedula) {
+                clientes.splice(clientes.indexOf(cliente), 1);                
+                break; 
+            }
+        }
+        pintarClientes();
+        limpiar();
+    }
+}
+
+// === LÓGICA DE PROGRAMACIÓN (CÁLCULOS) ===
+function calcularDisponible(ingresos, egresos) {
+  let resultado = ingresos - egresos;
+  return resultado < 0 //(if) resultado es menor a 0
+    ? 0 //retorna 0
+    : resultado; //(else) retorna resultado
+}
+
+function calcularCapacidadPago(montoDisponible) {
+  return montoDisponible * 0.5;
+}
+
+function calcularInteresSimple(monto, tasa, plazoAnios) {
+  return plazoAnios * monto * (tasa / 100);
+}
+
+function calcularTotalPagar(monto, interes) {
+  return monto + interes + 100;
+}
+
+function calcularCuotaMensual(total, plazoAnios) {
+  return total / (plazoAnios * 12);
+}
+
+function aprobarCredito(capacidadPago, cuotaMensual) {
+  return capacidadPago > cuotaMensual; //(true o false) retorna un valor booleano.
+}
+
+// === PROCESO DE CRÉDITO ===
+function guardarTasa() {
+  let valor = recuperarInt("tasaInteres");
+  if (valor >= 10 && valor <= 20) {
+    tasaInteres = valor;
+    mostrarTexto("mensajeTasa", "Tasa configurada: " + valor + "%");
+  } else {
+    mostrarTexto("mensajeTasa", "La tasa debe estar entre 10% y 20%");
+  }
+}
+
+function buscarClienteCredito() {
+  let cedula = recuperarTexto("buscarCedulaCredito");
+  let encontrado = buscarCliente(cedula); //recibe cedula de recuperarTexto("buscarCedulaCredito")
+  let contenedor = document.getElementById("datosClienteCredito");
+  mostrarTextoEnCaja("montoCredito", "");
+  mostrarTextoEnCaja("plazoCredito", "");
+  document.getElementById("resultadoCredito").innerHTML = "";
+  contenedor.innerHTML = "";
+
+  if (encontrado) {
+    contenedor.innerHTML = `
+      <h3>Datos del Cliente</h3>
+      <p><strong>Cédula:</strong> ${encontrado.cedula}</p>
+      <p><strong>Nombre:</strong> ${encontrado.nombre}</p>
+      <p><strong>Apellido:</strong> ${encontrado.apellido}</p>
+      <p><strong>E-mail:</strong> ${encontrado.email}</p>
+      <p><strong>Contacto:</strong> ${encontrado.contacto}</p>
+      <p><strong>Ingresos:</strong> ${encontrado.ingresos}</p>
+      <p><strong>Egresos:</strong> ${encontrado.egresos}</p>`;
+    clienteSeleccionado = encontrado;
+  } else {
+    contenedor.innerHTML = "<p>Cliente no encontrado</p>";
+    clienteSeleccionado = null;
+  }
+}
+
+function calcularCredito() {
+  //Si clienteSeleccionado ESTÁ VACÍO (es null), entonces ejecuta esto
+  if (!clienteSeleccionado)
+    return alert("Selecciona un cliente primero.");
+  
+  let monto = recuperarFloat("montoCredito");
+  let plazo = recuperarFloat("plazoCredito");
+  if (isNaN(monto) || monto <= 0 || isNaN(plazo) || plazo <= 0) 
+    return alert("Datos inválidos.");
+
+  let disponible = calcularDisponible(clienteSeleccionado.ingresos, clienteSeleccionado.egresos);
+  let capacidad = calcularCapacidadPago(disponible);
+  let interes = calcularInteresSimple(monto, tasaInteres, plazo);
+  let total = calcularTotalPagar(monto, interes);
+  let cuota = calcularCuotaMensual(total, plazo);
+  let aprobar = aprobarCredito(capacidad, cuota);
+
+  // Se COPIA a variables GLOBALES 
+  // Para que OTRAS funciones puedan usarlo después ej. solicitarCredito()
+  montoCalculado = monto;
+  plazoCalculado = plazo;
+  cuotaCalculada = cuota;
+  creditoAprobado = aprobar;
+
+  mostrarResultado(capacidad, total, cuota, aprobar);
+}
+
+function mostrarResultado(capacidad, total, cuota, aprobar) {
+  let resultado = document.getElementById("resultadoCredito");
+  resultado.innerHTML = `
+    Capacidad de pago: ${capacidad.toFixed(2)}<br>
+    Total a pagar: ${total.toFixed(2)}<br>
+    Cuota mensual: ${cuota.toFixed(2)}<br>
+    RESULTADO: ${aprobar //(if) aprobar es true
+      ? "APROBADO" // muestra "APROBADO"
+      : "RECHAZADO"}`; //(else) muestra "RECHAZADO"
+  resultado.className = aprobar //(if) aprobar es true
+    ? "aprobado"  // <div class="aprobado">
+    : "rechazado"; // (else) <div class="rechazado">
+  
+  let boton = document.getElementById("btnSolicitarCredito");
+    if (aprobar === true) {
+      boton.disabled = false; 
+    } else {
+      boton.disabled = true;
+    }
+}
+
+function solicitarCredito() {
+      //Si NO hay cliente seleccionado 
+      // O el crédito NO fue aprobado 
+      // SALIR de la función inmediatamente.
+  if (!clienteSeleccionado || !creditoAprobado) return;
+  creditos.push({
+    cedula: clienteSeleccionado.cedula,
+    monto: montoCalculado,
+    cuota: cuotaCalculada
+  });
+  alert("Crédito solicitado con éxito.");
+}
+
+/*
+PRACTICA 001
+*/
+let productos = [
+  {codigo: "123", nombreProducto: "Inversión 1"},
+  {codigo: "456", nombreProducto: "Inversión 2"},
+  {codigo: "789", nombreProducto: "Inversión 3"},
+]
+let productoSeleccionado = null
+function buscarProducto(codigo) {
+  for (let producto of productos) {
+    if (producto.codigo === codigo) return producto;
+  }
+  return null;
+}
+function guardarProducto() {
+  let codigo = recuperarTexto("codigo");
+  let nombreProducto = recuperarTexto("nombreProducto");
+  
+  let productoExistente = buscarProducto(codigo);
+  if (productoExistente !== null) {
+    productoExistente.codigo = codigo;
+    productoExistente.nombreProducto = nombreProducto;
+  } else {
+    productos.push({codigo, nombreProducto});
+  }
+  pintarProducto();
+  limpiarProducto();
+}
+function pintarProducto() {
+  let tbody = document.getElementById("tablaProductos");
+  tbody.innerHTML = "";
+  for (let producto of productos) {
+    tbody.innerHTML += `
+      <tr>
+        <td>${producto.codigo}</td>
+        <td>${producto.nombreProducto}</td>
+        <td><button onclick="actualizarProducto('${producto.codigo}')">Actualizar</button></td>
+        <td><button onclick="eliminarProducto('${producto.codigo}')">Eliminar</button></td>
+      </tr>`;
+  }
+}
+function actualizarProducto(codigo) {
+  let encontrado = buscarProducto(codigo);
+  productoSeleccionado = encontrado;
+  if (encontrado) {
+    mostrarTextoEnCaja("codigo", encontrado.codigo);
+    mostrarTextoEnCaja("nombreProducto", encontrado.nombreProducto);
+  }
+}
+function eliminarProducto(codigo) {
+    if (confirm(`¿Estás seguro de eliminar al producto con código: ${codigo} ?`)) {
+        for (let producto of productos) {
+            if (producto.codigo === codigo) {
+                productos.splice(productos.indexOf(producto), 1);                
+                break; 
+            }
+        }
+        pintarProducto();
+        limpiarProducto();
+    }
+}
+function limpiarProducto() {
+  mostrarTextoEnCaja("codigo", "");
+  mostrarTextoEnCaja("nombreProducto", "");
 }
