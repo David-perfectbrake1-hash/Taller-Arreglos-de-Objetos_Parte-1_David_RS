@@ -1,8 +1,8 @@
 // === ESTADO DE LA APLICACIÓN ===
 let clientes = [
-  {cedula: "123", nombre: "Mario", apellido: "Rojas", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
-  {cedula: "456", nombre: "Xavier", apellido: "Rojas", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
-  {cedula: "789", nombre: "Dario", apellido: "Rojas", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500}
+  {cedula: "123", nombre: "Mario", apellido: "Rojas", direccion: "Avenida", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
+  {cedula: "456", nombre: "Xavier", apellido: "Rojas", direccion: "Avenida", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
+  {cedula: "789", nombre: "Dario", apellido: "Rojas", direccion: "Avenida", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500}
 ];
 let creditos = [];
 
@@ -30,6 +30,7 @@ function limpiar() {
   mostrarTextoEnCaja("cedula", "");
   mostrarTextoEnCaja("nombre", "");
   mostrarTextoEnCaja("apellido", "");
+  mostrarTextoEnCaja("direccion", "")
   mostrarTextoEnCaja("email", "")
   mostrarTextoEnCaja("contacto", "")
   mostrarTextoEnCaja("ingresos", "");
@@ -50,12 +51,14 @@ function guardarCliente() {
   let cedula = recuperarTexto("cedula");
   let nombre = recuperarTexto("nombre");
   let apellido = recuperarTexto("apellido");
+  let direccion = recuperarTexto("direccion");
   let email = recuperarTexto("email")
   let contacto = recuperarTexto("contacto")
   let ingresos = recuperarFloat("ingresos");
   let egresos = recuperarFloat("egresos");
 
-  if (!cedula || !nombre || !apellido || !email || !contacto || isNaN(ingresos) || isNaN(egresos)) {
+
+  if (!cedula || !nombre || !apellido || !direccion || !email || !contacto || isNaN(ingresos) || isNaN(egresos)) {
     alert("Por favor, completa todos los campos con datos válidos.");
     return;
   }
@@ -64,12 +67,13 @@ function guardarCliente() {
   if (clienteExistente !== null) {
     clienteExistente.nombre = nombre;
     clienteExistente.apellido = apellido;
+    clienteExistente.direccion = direccion
     clienteExistente.email = email
     clienteExistente.contacto = contacto
     clienteExistente.ingresos = ingresos;
     clienteExistente.egresos = egresos;
   } else {
-    clientes.push({cedula, nombre, apellido, email, contacto, ingresos, egresos});
+    clientes.push({cedula, nombre, apellido, direccion, email, contacto, ingresos, egresos});
   }
   pintarClientes();
   limpiar();
@@ -84,6 +88,7 @@ function pintarClientes() {
         <td>${cliente.cedula}</td>
         <td>${cliente.nombre}</td>
         <td>${cliente.apellido}</td>
+        <td>${cliente.direccion}</td>
         <td>${cliente.email}</td>
         <td>${cliente.contacto}</td>
         <td>${cliente.ingresos}</td>
@@ -101,6 +106,7 @@ function seleccionarCliente(cedula) {
     mostrarTextoEnCaja("cedula", encontrado.cedula);
     mostrarTextoEnCaja("nombre", encontrado.nombre);
     mostrarTextoEnCaja("apellido", encontrado.apellido);
+    mostrarTextoEnCaja("direccion", encontrado.direccion)
     mostrarTextoEnCaja("email", encontrado.email);
     mostrarTextoEnCaja("contacto", encontrado.contacto);
     mostrarTextoEnCaja("ingresos", encontrado.ingresos);
@@ -175,6 +181,7 @@ function buscarClienteCredito() {
       <p><strong>Cédula:</strong> ${encontrado.cedula}</p>
       <p><strong>Nombre:</strong> ${encontrado.nombre}</p>
       <p><strong>Apellido:</strong> ${encontrado.apellido}</p>
+      <p><strong>Dirección:</strong> ${encontrado.direccion}</p>
       <p><strong>E-mail:</strong> ${encontrado.email}</p>
       <p><strong>Contacto:</strong> ${encontrado.contacto}</p>
       <p><strong>Ingresos:</strong> ${encontrado.ingresos}</p>
@@ -245,71 +252,4 @@ function solicitarCredito() {
     cuota: cuotaCalculada
   });
   alert("Crédito solicitado con éxito.");
-}
-
-/*
-PRACTICA 001
-*/
-let productos = [
-  {codigo: "123", nombreProducto: "Inversión 1"},
-  {codigo: "456", nombreProducto: "Inversión 2"},
-  {codigo: "789", nombreProducto: "Inversión 3"},
-]
-let productoSeleccionado = null
-function buscarProducto(codigo) {
-  for (let producto of productos) {
-    if (producto.codigo === codigo) return producto;
-  }
-  return null;
-}
-function guardarProducto() {
-  let codigo = recuperarTexto("codigo");
-  let nombreProducto = recuperarTexto("nombreProducto");
-  
-  let productoExistente = buscarProducto(codigo);
-  if (productoExistente !== null) {
-    productoExistente.codigo = codigo;
-    productoExistente.nombreProducto = nombreProducto;
-  } else {
-    productos.push({codigo, nombreProducto});
-  }
-  pintarProducto();
-  limpiarProducto();
-}
-function pintarProducto() {
-  let tbody = document.getElementById("tablaProductos");
-  tbody.innerHTML = "";
-  for (let producto of productos) {
-    tbody.innerHTML += `
-      <tr>
-        <td>${producto.codigo}</td>
-        <td>${producto.nombreProducto}</td>
-        <td><button onclick="actualizarProducto('${producto.codigo}')">Actualizar</button></td>
-        <td><button onclick="eliminarProducto('${producto.codigo}')">Eliminar</button></td>
-      </tr>`;
-  }
-}
-function actualizarProducto(codigo) {
-  let encontrado = buscarProducto(codigo);
-  productoSeleccionado = encontrado;
-  if (encontrado) {
-    mostrarTextoEnCaja("codigo", encontrado.codigo);
-    mostrarTextoEnCaja("nombreProducto", encontrado.nombreProducto);
-  }
-}
-function eliminarProducto(codigo) {
-    if (confirm(`¿Estás seguro de eliminar al producto con código: ${codigo} ?`)) {
-        for (let producto of productos) {
-            if (producto.codigo === codigo) {
-                productos.splice(productos.indexOf(producto), 1);                
-                break; 
-            }
-        }
-        pintarProducto();
-        limpiarProducto();
-    }
-}
-function limpiarProducto() {
-  mostrarTextoEnCaja("codigo", "");
-  mostrarTextoEnCaja("nombreProducto", "");
 }
