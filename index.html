@@ -15,6 +15,7 @@
   <button onclick="mostrarSeccion('parametros')">Parámetros</button>
   <button onclick="mostrarSeccion('clientes')">Clientes</button>
   <button onclick="mostrarSeccion('credito')">Credito</button>
+  <button onclick="mostrarSeccion('listaCreditos')">Créditos Registrados</button>
   <button onclick="mostrarSeccion('tutoria')">Contacto</button>
 
 </nav>
@@ -94,6 +95,39 @@
     <button id="btnSolicitarCredito" onclick="solicitarCredito()" disabled>
       Solicitar crédito
     </button>
+
+    <button id="btnAsignarCredito" onclick="asignarCredito()" disabled>
+      Asignar Crédito
+    </button>
+  </section>
+
+  <section id="listaCreditos">
+    <h2>Créditos Registrados</h2>
+
+    <input type="text" id="buscarCedulaListado" placeholder="Ingrese cédula a buscar">
+    <button onclick="buscarCreditosCliente()">Buscar</button>
+    <button onclick="pintarCreditos(creditos)">Ver todos</button>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Cédula</th>
+          <th>Nombre</th>
+          <th>Apellido</th>
+          <th>Dirección</th>
+          <th>E-mail</th>
+          <th>Contacto</th>
+          <th>Monto</th>
+          <th>Tasa</th>
+          <th>Plazo</th>
+          <th>Cuota</th>
+          <th>Acción</th>
+        </tr>
+      </thead>
+      <tbody id="tablaCreditos">
+        <!-- Las filas se generarán dinámicamente con JavaScript -->
+      </tbody>
+    </table>
   </section>
 
   <!-- 2. Identifique en el HTML las etiquetas <section> y sus respectivos id.  -->
