@@ -213,7 +213,7 @@ function pintarCreditos(creditos) {
 
   if (!creditos || creditos.length === 0) {
     tbody.innerHTML = 
-      `<tr><td colspan="12" style="text-align:center;">
+      `<tr><td colspan="11" style="text-align:center;">
         No hay créditos registrados.
       </td></tr>`;
     return;
@@ -232,10 +232,27 @@ function pintarCreditos(creditos) {
         <td>${credito.tasa}%</td>
         <td>${credito.plazo}</td>
         <td>${credito.cuota.toFixed(2)}</td>
-        <td><button onclick="eliminarCredito('${credito.cedula}')">Eliminar</button></td>
+        <td>
+          <button onclick="eliminarCredito(${credito.id}, '${credito.cedula}')">
+            Eliminar
+          </button>
+        </td>
       </tr>
     `;
   }
+}
+
+function eliminarCredito(id, cedula) {
+  if (!confirm(`¿Eliminar el crédito asociado a la cédula: ${cedula}?`)) return;
+
+  for (let credito of creditos) {
+    if (credito.id === id) {
+      creditos.splice(creditos.indexOf(credito), 1);
+      break; 
+    }
+  }
+
+  pintarCreditos(creditos);
 }
 
 function buscarCreditosCliente() {
@@ -327,6 +344,7 @@ function asignarCredito() {
 
   // Crear el objeto con la estructura exacta del taller
   let credito = {
+    id: Date.now(), //Genera un número único por cada crédito
     cedula: clienteSeleccionado.cedula,
     nombre: clienteSeleccionado.nombre,
     apellido: clienteSeleccionado.apellido,
