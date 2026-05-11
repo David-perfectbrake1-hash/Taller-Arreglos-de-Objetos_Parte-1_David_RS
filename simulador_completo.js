@@ -170,9 +170,16 @@ function buscarClienteCredito() {
   let cedula = recuperarTexto("buscarCedulaCredito");
   let encontrado = buscarCliente(cedula); //recibe cedula de recuperarTexto("buscarCedulaCredito")
   let contenedor = document.getElementById("datosClienteCredito");
+  
   mostrarTextoEnCaja("montoCredito", "");
   mostrarTextoEnCaja("plazoCredito", "");
+  
+  // LIMPIEZA DE CONTENEDORES
   document.getElementById("resultadoCredito").innerHTML = "";
+  document.getElementById("resultadoCredito").className = ""; // Quita el color verde/animación
+
+  document.getElementById("mensajeEstado").innerHTML = ""; 
+  document.getElementById("mensajeEstado").className = ""; // Quita el color azul/animación
   contenedor.innerHTML = "";
 
   if (encontrado) {
@@ -269,7 +276,7 @@ function buscarCreditosCliente() {
 function calcularCredito() {
   //Si clienteSeleccionado ESTÁ VACÍO (es null), entonces ejecuta esto
   if (!clienteSeleccionado)
-    return alert("Ingrese la cedula de un cliente primero.");
+    return alert("Ingrese un número de cédula en Buscar cliente.");
   
   let monto = recuperarFloat("montoCredito");
   let plazo = recuperarFloat("plazoCredito");
@@ -321,18 +328,37 @@ function mostrarResultado(capacidad, total, cuota, aprobar) {
 }
 
 function solicitarCredito() {
+  // Si no hay cliente o no hay crédito aprobado, muestra error y detiene la función
   if (!clienteSeleccionado || !creditoAprobado) {
-    alert("No se puede solicitar: crédito no aprobado o cliente no seleccionado.");
+    let resultado = document.getElementById("resultadoCredito");
+    resultado.innerHTML = "⚠️ No se puede solicitar: crédito no aprobado.";
+    resultado.className = "rechazado";
     return;
   }
-  alert("Solicitando crédito..."); 
 
+  // Cambiar visualmente el estado
+  let resultado = document.getElementById("mensajeEstado");
+  resultado.innerHTML = `
+    <div class="mensaje-proceso">
+      <strong>✅ Solicitud en proceso...</strong><br>
+      <p>Presione el botón <b>"Asignar Crédito"</b> para completar el registro.</p>
+    </div>
+  `;
+  resultado.className = "proceso";
+
+  // Gestión de botones
   let btnAsignar = document.getElementById("btnAsignarCredito");
-    if (btnAsignar) {
-      btnAsignar.disabled = false;
-    }
-  alert(" Solicitud procesada. Ahora puede asignar el crédito.");
- document.getElementById("btnSolicitarCredito").disabled = true;
+  let btnSolicitar = document.getElementById("btnSolicitarCredito");
+
+  if (btnAsignar) {
+    btnAsignar.disabled = false; // Habilitamos btnAsignar
+    btnAsignar.style.backgroundColor = "#2ecc71";
+    btnAsignar.style.fontWeight = "bold";
+  }
+  
+  if (btnSolicitar) {
+    btnSolicitar.disabled = true; // Deshabilitamos el actual para evitar duplicados
+  }
 }
 
 function asignarCredito() {
