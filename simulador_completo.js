@@ -274,6 +274,8 @@ function buscarCreditosCliente() {
 }
 
 function calcularCredito() {
+  document.getElementById("mensajeEstado").innerHTML = "";
+  document.getElementById("mensajeEstado").className = "";
   //Si clienteSeleccionado ESTÁ VACÍO (es null), entonces ejecuta esto
   if (!clienteSeleccionado)
     return alert("Ingrese un número de cédula en Buscar cliente.");
