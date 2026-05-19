@@ -18,6 +18,8 @@
   <button onclick="mostrarSeccion('listaCreditos')">Créditos Registrados</button>
   <button onclick="mostrarSeccion('contactos')">Contacto</button>
 
+  <button onclick="mostrarVIP()" style="background-color: gold;">Créditos VIP</button>
+  <button onclick="mostrarAcercaDe()">Acerca de</button>
 </nav>
 
 <!-- 2. Identifique en el HTML las etiquetas <section> y sus respectivos id.  -->
@@ -32,6 +34,12 @@
   <br>
   <button onclick="guardarTasa()">Guardar tasa</button>
 
+  <br><br>
+
+  <label>Monto Máximo de Crédito:</label>
+  <input type="number" id="inputMontoMaximo" value="10000">
+  <button onclick="guardarMontoMaximo()">Guardar Monto Máximo</button>
+
   <p id="mensajeTasa"></p>
 </section>
 
@@ -44,7 +52,7 @@
   <input type="text" id="apellido" placeholder="Apellido">
   <input type="text" id="direccion" placeholder="Dirección">
   <input type="text" id="email" placeholder="email">
-  <input type="text" id="contacto" placeholder="contacto">
+  <input type="text" id="telefono" placeholder="Telefono">
   <input type="number" id="ingresos" placeholder="Ingresos mensuales">
   <input type="number" id="egresos" placeholder="Egresos mensuales">
 
@@ -61,7 +69,7 @@
         <th>Apellido</th>
         <th>Dirección</th>
         <th>E-mail</th>
-        <th>Contacto</th>
+        <th>Telefono</th>
         <th>Ingresos</th>
         <th>Egresos</th>
         <th>Actualizar</th>
@@ -118,7 +126,7 @@
           <th>Apellido</th>
           <th>Dirección</th>
           <th>E-mail</th>
-          <th>Contacto</th>
+          <th>Telefono</th>
           <th>Monto</th>
           <th>Tasa</th>
           <th>Plazo</th>

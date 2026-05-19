@@ -1,8 +1,8 @@
 // === ESTADO DE LA APLICACIÓN ===
 let clientes = [
-  {cedula: "123", nombre: "Mario", apellido: "Rojas", direccion: "Avenida", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
-  {cedula: "456", nombre: "Xavier", apellido: "Rojas", direccion: "Avenida", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
-  {cedula: "789", nombre: "Dario", apellido: "Rojas", direccion: "Avenida", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500}
+  {cedula: "123", nombre: "Mario", apellido: "Rojas", direccion: "Avenida", email: "@", telefono: "xx-xx", ingresos: 1000, egresos: 500},
+  {cedula: "456", nombre: "Xavier", apellido: "Rojas", direccion: "Avenida", email: "@", telefono: "xx-xx", ingresos: 1000, egresos: 500},
+  {cedula: "789", nombre: "Dario", apellido: "Rojas", direccion: "Avenida", email: "@", telefono: "xx-xx", ingresos: 1000, egresos: 500}
 ];
 let creditos = [];
 
@@ -20,6 +20,8 @@ let cuotaCalculada = 0;
 let montoCalculado = 0;
 let plazoCalculado = 0;
 let creditoAprobado = false;
+
+let montoMaximo = 10000
 
 // === NAVEGACIÓN Y UI ===
 function ocultarSecciones() {
@@ -44,7 +46,7 @@ function limpiar() {
   mostrarTextoEnCaja("apellido", "");
   mostrarTextoEnCaja("direccion", "")
   mostrarTextoEnCaja("email", "")
-  mostrarTextoEnCaja("contacto", "")
+  mostrarTextoEnCaja("telefono", "")
   mostrarTextoEnCaja("ingresos", "");
   mostrarTextoEnCaja("egresos", "");
   mostrarTextoEnCaja("montoCredito", "");
@@ -65,12 +67,12 @@ function guardarCliente() {
   let apellido = recuperarTexto("apellido");
   let direccion = recuperarTexto("direccion");
   let email = recuperarTexto("email")
-  let contacto = recuperarTexto("contacto")
+  let telefono = recuperarTexto("telefono")
   let ingresos = recuperarFloat("ingresos");
   let egresos = recuperarFloat("egresos");
 
 
-  if (!cedula || !nombre || !apellido || !direccion || !email || !contacto || isNaN(ingresos) || isNaN(egresos)) {
+  if (!cedula || !nombre || !apellido || !direccion || !email || !telefono || isNaN(ingresos) || isNaN(egresos)) {
     alert("Por favor, completa todos los campos con datos válidos.");
     return;
   }
@@ -81,11 +83,11 @@ function guardarCliente() {
     clienteExistente.apellido = apellido;
     clienteExistente.direccion = direccion
     clienteExistente.email = email
-    clienteExistente.contacto = contacto
+    clienteExistente.telefono = telefono
     clienteExistente.ingresos = ingresos;
     clienteExistente.egresos = egresos;
   } else {
-    clientes.push({cedula, nombre, apellido, direccion, email, contacto, ingresos, egresos});
+    clientes.push({cedula, nombre, apellido, direccion, email, telefono, ingresos, egresos});
   }
   pintarClientes();
   limpiar();
@@ -102,7 +104,7 @@ function pintarClientes() {
         <td>${cliente.apellido}</td>
         <td>${cliente.direccion}</td>
         <td>${cliente.email}</td>
-        <td>${cliente.contacto}</td>
+        <td>${cliente.telefono}</td>
         <td>${cliente.ingresos}</td>
         <td>${cliente.egresos}</td>
         <td><button onclick="seleccionarCliente('${cliente.cedula}')">Actualizar</button></td>
@@ -120,7 +122,7 @@ function seleccionarCliente(cedula) {
     mostrarTextoEnCaja("apellido", encontrado.apellido);
     mostrarTextoEnCaja("direccion", encontrado.direccion)
     mostrarTextoEnCaja("email", encontrado.email);
-    mostrarTextoEnCaja("contacto", encontrado.contacto);
+    mostrarTextoEnCaja("telefono", encontrado.telefono);
     mostrarTextoEnCaja("ingresos", encontrado.ingresos);
     mostrarTextoEnCaja("egresos", encontrado.egresos);
   }
@@ -202,7 +204,7 @@ function buscarClienteCredito() {
       <p><strong>Apellido:</strong> ${encontrado.apellido}</p>
       <p><strong>Dirección:</strong> ${encontrado.direccion}</p>
       <p><strong>E-mail:</strong> ${encontrado.email}</p>
-      <p><strong>Contacto:</strong> ${encontrado.contacto}</p>
+      <p><strong>Telefono:</strong> ${encontrado.telefono}</p>
       <p><strong>Ingresos:</strong> ${encontrado.ingresos}</p>
       <p><strong>Egresos:</strong> ${encontrado.egresos}</p>`;
     clienteSeleccionado = encontrado;
@@ -246,7 +248,7 @@ function pintarCreditos(creditos) {
         <td>${credito.apellido}</td>
         <td>${credito.direccion}</td>
         <td>${credito.email}</td>
-        <td>${credito.contacto}</td>
+        <td>${credito.telefono}</td>
         <td>${credito.monto}</td>
         <td>${credito.tasa}%</td>
         <td>${credito.plazo}</td>
@@ -294,6 +296,15 @@ function calcularCredito() {
   
   let monto = recuperarFloat("montoCredito");
   let plazo = recuperarFloat("plazoCredito");
+
+  if (monto > montoMaximo) {
+      alert(
+        "Error: El monto solicitado supera el máximo permitido ($" + montoMaximo + ")"
+      );
+      mostrarTextoEnCaja("montoCredito", "")
+      return
+  }
+
   if (isNaN(monto) || monto <= 0 || isNaN(plazo) || plazo <= 0) 
     return alert("Datos inválidos: Ingrese monto y plazo.");
 
@@ -390,7 +401,7 @@ function asignarCredito() {
     apellido: clienteSeleccionado.apellido,
     direccion: clienteSeleccionado.direccion,
     email: clienteSeleccionado.email,
-    contacto: clienteSeleccionado.contacto,
+    telefono: clienteSeleccionado.telefono,
     monto: montoCalculado,
     tasa: tasaInteres,
     plazo: plazoCalculado,
@@ -450,4 +461,37 @@ function ordenarPorNombre(){
       (a,b)=>a.nombre.localeCompare(b.nombre)
     )
     pintarContactos(contactosOrdenados)
+}
+
+function guardarMontoMaximo() {
+    let valor = recuperarFloat("inputMontoMaximo")
+    if (valor > 0) {
+        montoMaximo = valor
+        alert("Monto máximo actualizado a: " + montoMaximo)
+    } else {
+        alert("Ingrese un monto válido")
+    }
+}
+
+function mostrarVIP() {
+    let creditosVIP = []
+    for (let i = 0; i < creditos.length; i++) {
+        if (creditos[i].monto > 5000) {
+            creditosVIP.push(creditos[i])
+        }
+    }
+    
+    if (creditosVIP.length === 0) {
+        alert("No hay créditos VIP (mayores a $5000) registrados.")
+    }
+    
+    pintarCreditos(creditosVIP)
+    mostrarSeccion('listaCreditos')
+}
+
+function mostrarAcercaDe() {
+    alert("Desarrollado por: David RS\n" +
+          "Carrera: Desarrollo de Software\n" +
+          "Instituto: Instituto Movilis\n" +
+          "Frase: 'Sí se puede.'")
 }
