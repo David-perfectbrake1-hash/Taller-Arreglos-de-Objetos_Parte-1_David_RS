@@ -6,6 +6,14 @@ let clientes = [
 ];
 let creditos = [];
 
+let listaContactos = [
+  {nombre: "David001", numero: "99001"}, 
+  {nombre: "D002", numero: "99002"}, 
+  {nombre: "D003", numero: "99003"},
+  {cedula: "789", nombre: "Dario", apellido: "Rojas", direccion: "Avenida", email: "@", contacto: "xx-xx", ingresos: 1000, egresos: 500},
+  {cedula: "456", nombre: "Xavier", apellido: "Rojas", direccion: "Avenida", email: "@", numero: "99004", ingresos: 1000, egresos: 500},
+]
+
 let tasaInteres = 15;
 let clienteSeleccionado = null;
 let cuotaCalculada = 0;
@@ -24,6 +32,10 @@ function ocultarSecciones() {
 function mostrarSeccion(id) {
   ocultarSecciones();
   document.getElementById(id).classList.add("activa");
+
+  if(id==="contactos"){
+    pintarContactos(listaContactos)
+  }
 }
 
 function limpiar() {
@@ -391,4 +403,51 @@ function asignarCredito() {
   alert(`✅ Crédito asignado exitosamente a ${clienteSeleccionado.nombre} ${clienteSeleccionado.apellido}`);
   
   console.log("Créditos registrados:", creditos);
+}
+
+/*
+---------------REPASO CLASE--------------------
+*/
+function pintarContactos(listaContactos) {
+  let tbody = document.getElementById("tablaContactos");
+  tbody.innerHTML = "";
+  for (let contacto of listaContactos) {
+    tbody.innerHTML += `
+      <tr>
+        <td>${contacto.nombre}</td>
+        <td>${contacto.numero}</td>
+      </tr>`;
+  }
+}
+
+function buscarContactos(filtro){
+  let cmpFiltro = recuperarTexto("buscarContacto")
+  let filtroContactos = []
+  if(filtro=="nombre"){
+    for(let i = 0; i < listaContactos.length; i++){
+      let contacto = listaContactos[i]
+        if (contacto.nombre == cmpFiltro){
+          filtroContactos.push(contacto)
+        }
+    }
+    pintarContactos(filtroContactos)
+  }
+
+  if(filtro=="numero"){
+    for(let i = 0; i < listaContactos.length; i++){
+      let contacto = listaContactos[i]
+        if (contacto.numero == cmpFiltro){
+          filtroContactos.push(contacto)
+        }
+    }
+    pintarContactos(filtroContactos)
+  }
+}
+
+function ordenarPorNombre(){
+  let contactosOrdenados = []
+    contactosOrdenados = listaContactos.slice().sort(
+      (a,b)=>a.nombre.localeCompare(b.nombre)
+    )
+    pintarContactos(contactosOrdenados)
 }
